@@ -24,7 +24,7 @@ import com.will.weiyue.MyApp;
 import com.will.weiyue.R;
 import com.will.weiyue.bean.NewsDetail;
 import com.will.weiyue.component.ApplicationComponent;
-import com.will.weiyue.component.DaggerDetailComponent;
+import com.will.weiyue.component.DaggerHttpComponent;
 import com.will.weiyue.net.NewsApi;
 import com.will.weiyue.net.NewsUtils;
 import com.will.weiyue.ui.adapter.NewsDetailAdapter;
@@ -53,7 +53,7 @@ import in.srain.cube.views.ptr.PtrHandler;
  * author: Will .
  * date: 2017/9/8 .
  */
-public class  DetailFragment extends BaseFragment<DetailPresenter> implements DetailContract.View {
+public class DetailFragment extends BaseFragment<DetailPresenter> implements DetailContract.View {
     private static final String TAG = "JdDetailFragment";
 
     @BindView(R.id.mRecyclerView)
@@ -93,7 +93,7 @@ public class  DetailFragment extends BaseFragment<DetailPresenter> implements De
 
     @Override
     public void initInjector(ApplicationComponent appComponent) {
-        DaggerDetailComponent.builder()
+        DaggerHttpComponent.builder()
                 .applicationComponent(appComponent)
                 .build()
                 .inject(this);
@@ -239,7 +239,7 @@ public class  DetailFragment extends BaseFragment<DetailPresenter> implements De
             mBanner.setImages(mUrlList);
             mBanner.setBannerTitles(mTitleList);
             mBanner.start();
-            if (detailAdapter.getHeaderLayoutCount()<1){
+            if (detailAdapter.getHeaderLayoutCount() < 1) {
                 detailAdapter.addHeaderView(view_Focus);
             }
         }
@@ -252,8 +252,9 @@ public class  DetailFragment extends BaseFragment<DetailPresenter> implements De
 
     @Override
     public void loadData(List<NewsDetail.ItemBean> itemBeanList) {
-        if (itemBeanList == null) {
+        if (itemBeanList == null || itemBeanList.size() == 0) {
             showFaild();
+            mPtrFrameLayout.refreshComplete();
         } else {
             downPullNum++;
             if (isRemoveHeaderView) {
@@ -269,7 +270,7 @@ public class  DetailFragment extends BaseFragment<DetailPresenter> implements De
 
     @Override
     public void loadMoreData(List<NewsDetail.ItemBean> itemBeanList) {
-        if (itemBeanList == null) {
+        if (itemBeanList == null || itemBeanList.size() == 0) {
             detailAdapter.loadMoreFail();
         } else {
             upPullNum++;
